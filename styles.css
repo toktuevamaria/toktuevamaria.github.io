@@ -160,6 +160,12 @@ html{overflow-x:clip}
 .chap .subs{grid-column:10/span 3;color:var(--muted)}
 .chap.plain h2{grid-column:1/span 6}
 .chap .ctext{grid-column:7/span 5;display:flex;flex-direction:column;gap:10px;font-size:16px;line-height:1.42;letter-spacing:-.005em;max-width:46ch}
+
+/* Правый текстовый блок начинается на уровне верха строчных букв заголовка (x-height), а не заглавных.
+   Метрики Inter Tight: x-height .547em, cap-height .734em, ascent .969em, descent .241em. */
+.phead .desc{margin-top:calc(clamp(34px,4.4vw,64px) * .2921 - 5.43px)}
+.chap .ctext{align-self:start;margin-top:calc(clamp(22px,2.2vw,34px) * .3421 - 5.43px)}
+@media (max-width:760px){.phead .desc,.chap .ctext{margin-top:0}}
 .flip{grid-column:1/-1;display:flex;flex-direction:column;gap:12px;outline:none}
 .flip-stage{position:relative;background:var(--ph-photo);display:grid;place-items:center;padding:clamp(16px,4vw,56px);user-select:none}
 .flip-stage img{display:block;width:auto;height:auto;max-width:100%;max-height:min(78vh,1000px);box-shadow:0 1px 0 rgba(17,17,16,.06),0 22px 44px -26px rgba(17,17,16,.5)}
