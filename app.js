@@ -3,7 +3,7 @@ const tagLine = p => p.cats.map(c=>CATS[c]).join(", ");
 const ph = (ratio, kind, label) => `<div class="ph${kind==="design"?" d":""}" style="aspect-ratio:${ratio}"><span>${label}</span></div>`;
 
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const thumb = p => p.coverVid && !reduce ? `<video class="img" src="${p.coverVid}" poster="${p.cover}" autoplay muted loop playsinline preload="metadata" style="aspect-ratio:${p.r}" aria-label="${p.t}"></video>`
+const thumb = p => p.coverVid && !reduce ? `<video class="img" src="${p.coverVid}" poster="${p.cover}" data-alt="${p.coverVid.replace(/\.mp4$/,".webp")}" autoplay muted loop playsinline preload="auto" style="aspect-ratio:${p.r}" aria-label="${p.t}"></video>`
   : p.cover ? `<img class="img" src="${p.cover}" alt="${p.t}" loading="lazy" style="aspect-ratio:${p.r}">` : ph(p.r,p.kind,p.kind==="photo"?"кадр":"обложка");
 const card = p => `<a class="card" href="#${p.id}">${thumb(p)}
   <div class="cap"><span class="t">${p.t}</span><span class="y">${p.y}</span></div><span class="m it">${tagLine(p)}</span></a>`;
@@ -170,6 +170,17 @@ function typograph(root){
   }
 }
 
+/* автозапуск «гифок»: iOS (режим энергосбережения), встроенные браузеры Telegram/Instagram
+   могут запретить autoplay — тогда подменяем видео на анимированный WebP */
+function swapVid(v){ if(!v.dataset.alt||!v.isConnected) return; const i=document.createElement("img");
+  i.className=v.className; i.src=v.dataset.alt; i.alt=v.getAttribute("aria-label")||""; i.style.cssText=v.style.cssText; i.decoding="async"; v.replaceWith(i); }
+function kickVids(root=document){
+  root.querySelectorAll("video[autoplay]").forEach(v=>{
+    v.muted=true; v.defaultMuted=true; v.playsInline=true; v.controls=false;
+    const pr=v.play(); if(pr&&pr.catch) pr.catch(e=>{ if(!e||e.name!=="AbortError") swapVid(v); });
+  });
+}
+["touchstart","click","visibilitychange"].forEach(ev=>document.addEventListener(ev,()=>{ if(!document.hidden) document.querySelectorAll("video[autoplay]").forEach(v=>{ if(v.paused) v.play().catch(()=>{}); }); },{passive:true}));
 /* ---------- роутинг ---------- */
 const app = document.getElementById("app");
 function render(){
@@ -181,6 +192,7 @@ function render(){
   typograph(app);
   app.querySelectorAll(".flip").forEach(el=>flipShow(el,0,true));
   closeLb();
+  kickVids(app);
 }
 window.addEventListener("hashchange",()=>{render();window.scrollTo(0,0);});
 app.addEventListener("click",e=>{
