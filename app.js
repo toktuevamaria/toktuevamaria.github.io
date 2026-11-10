@@ -3,7 +3,7 @@ const tagLine = p => p.cats.map(c=>CATS[c]).join(", ");
 const ph = (ratio, kind, label) => `<div class="ph${kind==="design"?" d":""}" style="aspect-ratio:${ratio}"><span>${label}</span></div>`;
 
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const thumb = p => p.coverVid && !reduce ? `<video class="img" src="${p.coverVid}" poster="${p.cover}" data-alt="${p.coverVid.replace(/\.mp4$/,".webp")}" autoplay muted loop playsinline preload="auto" style="aspect-ratio:${p.r}" aria-label="${p.t}"></video>`
+const thumb = p => p.coverVid && !reduce ? `<img class="img" src="${p.coverVid.replace(/\.mp4$/,".webp")}" alt="${p.t}" decoding="async" style="aspect-ratio:${p.r}">`
   : p.cover ? `<img class="img" src="${p.cover}" alt="${p.t}" loading="lazy" style="aspect-ratio:${p.r}">` : ph(p.r,p.kind,p.kind==="photo"?"кадр":"обложка");
 const card = p => `<a class="card" href="#${p.id}">${thumb(p)}
   <div class="cap"><span class="t">${p.t}</span><span class="y">${p.y}</span></div><span class="m it">${tagLine(p)}</span></a>`;
