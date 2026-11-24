@@ -1,4 +1,7 @@
 /* Логика сайта: главная, фильтры, страницы проектов, просмотр фото. Обычно менять не нужно. */
+const LANG = document.documentElement.lang==="en" ? "en" : "ru";
+const L = t => (LANG==="en" && typeof EN_UI!=="undefined" && EN_UI[t]) || t;
+const langLink = () => LANG==="en" ? `<a class="lang" href="./${location.hash}" hreflang="ru" lang="ru">Русский</a>` : `<a class="lang" href="en.html${location.hash}" hreflang="en" lang="en">English</a>`;
 const tagLine = p => p.cats.map(c=>CATS[c]).join(", ");
 const ph = (ratio, kind, label) => `<div class="ph${kind==="design"?" d":""}" style="aspect-ratio:${ratio}"><span>${label}</span></div>`;
 
@@ -39,7 +42,7 @@ function worksGrid(n){
       cols = [[],[]]; const h=[0,0]; list.forEach(p=>{const i=h[0]<=h[1]?0:1; cols[i].push(p); h[i]+=ratio(p)+0.12;});
     }
   }
-  return `<ul class="filters" aria-label="Фильтр по направлениям">${btn("all","все работы",P.length)}${Object.keys(CATS).filter(k=>counts[k]).map(k=>btn(k,CATS[k],counts[k])).join("")}</ul>
+  return `<ul class="filters" aria-label="${L("Фильтр по направлениям")}">${btn("all",L("все работы"),P.length)}${Object.keys(CATS).filter(k=>counts[k]).map(k=>btn(k,CATS[k],counts[k])).join("")}</ul>
     <div class="cols${wide?" va":""}" style="--n:${n}">${cols.map(c=>`<div class="col">${c.map(card).join("")}</div>`).join("")}</div>`;
 }
 
@@ -47,10 +50,10 @@ function worksGrid(n){
 let gallery = [], galleryKind = "photo";
 function projectMeta(p, withBack){
   return `<div class="p-head">
-      ${withBack?`<a class="back" href="#"><span>←</span><span class="it">все работы</span></a>`:""}
+      ${withBack?`<a class="back" href="#"><span>←</span><span class="it">${L("все работы")}</span></a>`:""}
       <h1 class="p-title">${p.t}</h1>
       ${p.sub?`<p class="p-sub it">${p.sub}</p>`:""}
-      <dl class="meta">${(p.meta||[["Год",p.y],["Роль",p.role],["Клиент",p.client],["Тип",`<span class="it">${tagLine(p)}</span>`]]).map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>
+      <dl class="meta">${(p.meta||[[L("Год"),p.y],[L("Роль"),p.role],[L("Клиент"),p.client],[L("Тип"),`<span class="it">${tagLine(p)}</span>`]]).map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>
       <div class="p-text">${p.desc ? p.desc.map(t=>`<p>${t}</p>`).join("") : p.kind==="photo"
         ? `<p>Здесь будет 2–4 предложения о концепции серии: идея, настроение, где и с кем снимали.</p><p class="muted">Команда: модель, стилист, визажист. Имена через запятую.</p>`
         : `<p>Здесь будет короткое описание проекта в 2–3 предложения: что за продукт и какая стояла задача.</p>`}</div>
@@ -61,14 +64,14 @@ function realBody(p){
   const media = (type, src, r, poster, label) => {
     const i = gallery.length; gallery.push({type, src, poster, r});
     const el = type==="img"
-      ? `<img class="media" src="${src}" alt="${p.t}, ${label||"изображение "+(i+1)}" loading="${i<2?"eager":"lazy"}" style="aspect-ratio:${r}">`
-      : `<video class="media" src="${src}" poster="${poster}" ${reduce?"":"autoplay"} muted loop playsinline preload="metadata" style="aspect-ratio:${r}" aria-label="${p.t}, анимация"></video>`;
-    return `<button type="button" data-i="${i}" aria-label="Открыть изображение ${i+1}">${el}</button>`;
+      ? `<img class="media" src="${src}" alt="${p.t}, ${label||L("изображение")+" "+(i+1)}" loading="${i<2?"eager":"lazy"}" style="aspect-ratio:${r}">`
+      : `<video class="media" src="${src}" poster="${poster}" ${reduce?"":"autoplay"} muted loop playsinline preload="metadata" style="aspect-ratio:${r}" aria-label="${p.t}, ${L("анимация")}"></video>`;
+    return `<button type="button" data-i="${i}" aria-label="${L("Открыть изображение")} ${i+1}">${el}</button>`;
   };
   const html = p.comp.map(m=>{
     const pos = m.s ? `grid-column:${m.s}/span ${m.n}` : "grid-column:1/-1";
     const cls = [m.bleed?"bleed":"", m.paper?"paper":"", m.cls||""].join(" ").trim();
-    if(m.t==="toc") return `<div class="ctoc" style="${pos}"><div class="lab2"><span class="it">структура книги</span><span class="muted">оглавление на развороте ниже, с. 7</span></div>
+    if(m.t==="toc") return `<div class="ctoc" style="${pos}"><div class="lab2"><span class="it">${L("структура книги")}</span><span class="muted">${L("оглавление на развороте ниже, с. 7")}</span></div>
       <ol>${p.toc.map(([n,t,ch])=>`<li style="display:contents"><span class="muted">${n}</span><span${ch?' style="font-family:var(--sans);font-size:14px;font-weight:500;text-transform:uppercase;letter-spacing:.015em;padding-top:8px"':""}>${t}</span></li>`).join("")}</ol></div>`;
     if(m.t==="ch" && !Array.isArray(p.chapters[m.n])){ const c = p.chapters[m.n];
       return `<section class="chap plain" aria-label="${c.title}"><h2>${c.title}</h2>${c.text&&c.text.length?`<div class="ctext">${c.text.map(t=>`<p>${t}</p>`).join("")}</div>`:""}</section>`; }
@@ -76,13 +79,13 @@ function realBody(p){
       return `<section class="chap" aria-label="${title}"><span class="num it">${num||"&nbsp;"}</span><h2>${title}</h2><ul class="plain subs">${subs.map(x=>`<li>${x}</li>`).join("")}</ul></section>`; }
     if(m.t==="flip"){ const id = flipSets.length; const data = p.flips[m.g].map(x=>({src:D+x[0], r:x[2], th:D+(x[3]||x[0])}));
       flipSets.push({data, idx:0});
-      return `<section class="flip" data-fid="${id}" tabindex="0" aria-label="Листалка: ${p.chapters[m.g].title}">
+      return `<section class="flip" data-fid="${id}" tabindex="0" aria-label="${L("Листалка")}: ${p.chapters[m.g].title}">
         <div class="flip-stage"><img class="flip-img" alt="" style="aspect-ratio:${data[0].r}">
-          <button type="button" class="flip-hit prev" data-flip="-1" aria-label="Предыдущий разворот"></button>
-          <button type="button" class="flip-hit next" data-flip="1" aria-label="Следующий разворот"></button></div>
-        <div class="flip-bar"><div class="arrows"><button type="button" data-flip="-1" class="flip-prev">← назад</button><button type="button" data-flip="1" class="flip-next">вперёд →</button></div>
+          <button type="button" class="flip-hit prev" data-flip="-1" aria-label="${L("Предыдущий разворот")}"></button>
+          <button type="button" class="flip-hit next" data-flip="1" aria-label="${L("Следующий разворот")}"></button></div>
+        <div class="flip-bar"><div class="arrows"><button type="button" data-flip="-1" class="flip-prev">← ${L("назад")}</button><button type="button" data-flip="1" class="flip-next">${L("вперёд")} →</button></div>
           <span class="flip-count"></span></div>
-        <div class="flip-strip" role="list">${data.map((x,i)=>`<button type="button" role="listitem" data-flip-to="${i}" aria-label="Разворот ${i+1}"><img src="${x.th}" alt="" loading="lazy" style="aspect-ratio:${x.r}"><span>${i+1}</span></button>`).join("")}</div>
+        <div class="flip-strip" role="list">${data.map((x,i)=>`<button type="button" role="listitem" data-flip-to="${i}" aria-label="${L("Разворот")} ${i+1}"><img src="${x.th}" alt="" loading="lazy" style="aspect-ratio:${x.r}"><span>${i+1}</span></button>`).join("")}</div>
       </section>`; }
     if(m.t==="pp") return `<div class="pp"><div>${media("img",D+m.items[0][0],m.items[0][1])}</div><div class="mk">${media("img",D+m.items[1][0],m.items[1][1])}</div></div>`;
     if(m.t==="vs"){ const c = m.n!=null ? p.chapters[m.n] : null;
@@ -99,9 +102,9 @@ function realBody(p){
 }
 function projectBody(p){
   if(p.comp){ const i = P.indexOf(p), prev = P[(i-1+P.length)%P.length], next = P[(i+1)%P.length];
-    return realBody(p) + `<nav class="pager pnav" aria-label="Другие проекты">
-      <a href="#${prev.id}"><span class="it muted">← предыдущий</span><span class="t">${prev.t}</span></a>
-      <a href="#${next.id}"><span class="it muted">следующий →</span><span class="t">${next.t}</span></a></nav>`; }
+    return realBody(p) + `<nav class="pager pnav" aria-label="${L("Другие проекты")}">
+      <a href="#${prev.id}"><span class="it muted">← ${L("предыдущий")}</span><span class="t">${prev.t}</span></a>
+      <a href="#${next.id}"><span class="it muted">${L("следующий")} →</span><span class="t">${next.t}</span></a></nav>`; }
   const imgs = p.kind==="photo"
     ? [["3/2","full"],["4/5",""],["4/5",""],["3/2","full"],["4/5",""],["2/3",""],["16/9","full"]]
     : [["16/9","full"],["step","задача","Какую проблему решали и для кого. Здесь пара фраз из вашего текста."],["4/3",""],["4/3",""],
@@ -115,18 +118,18 @@ function projectBody(p){
   }).join("");
   const i = P.indexOf(p), prev = P[(i-1+P.length)%P.length], next = P[(i+1)%P.length];
   return `<div class="gallery">${html}</div>
-    <nav class="pager" aria-label="Другие проекты">
-      <a href="#${prev.id}"><span class="it muted">← предыдущий</span><span class="t">${prev.t}</span></a>
-      <a href="#${next.id}"><span class="it muted">следующий →</span><span class="t">${next.t}</span></a>
+    <nav class="pager" aria-label="${L("Другие проекты")}">
+      <a href="#${prev.id}"><span class="it muted">← ${L("предыдущий")}</span><span class="t">${prev.t}</span></a>
+      <a href="#${next.id}"><span class="it muted">${L("следующий")} →</span><span class="t">${next.t}</span></a>
     </nav>`;
 }
 const counter = p => `<span class="p-foot">${String(P.indexOf(p)+1).padStart(2,"0")} / ${String(P.length).padStart(2,"0")}</span>`;
 
 function projectPage(p){
-  const meta = p.meta||[["Год",p.y],["Роль",p.role],["Клиент",p.client],["Тип",`<span class="it">${tagLine(p)}</span>`]];
+  const meta = p.meta||[[L("Год"),p.y],[L("Роль"),p.role],[L("Клиент"),p.client],[L("Тип"),`<span class="it">${tagLine(p)}</span>`]];
   const desc = p.desc || [p.kind==="photo" ? "Здесь будет 2–4 предложения о концепции серии: идея, настроение, где и с кем снимали." : "Здесь будет короткое описание проекта в 2–3 предложения: что за продукт и какая стояла задача."];
   return `<header class="ptop">
-      <div class="l"><a class="name" href="#">Мария Токтуева</a><a href="#"><span class="it">← все работы</span></a><a href="#about">Обо мне</a></div>
+      <div class="l"><a class="name" href="#">${L("Мария Токтуева")}</a><a href="#"><span class="it">← ${L("все работы")}</span></a><a href="#about">${L("Обо мне")}</a>${langLink()}</div>
       <div class="r"><a href="mailto:toktuevamaria@gmail.com"><span class="it">toktuevamaria@gmail.com</span></a><a href="https://t.me/mariatoktueva" target="_blank" rel="noopener"><span class="it">telegram</span></a></div>
     </header>
     <section class="phead">
@@ -138,12 +141,12 @@ function projectPage(p){
 `;
 }
 function sideA(view){
-  const nav = [["#","Работы",view==="home"],["#about","Обо мне",view==="about"]];
+  const nav = [["#",L("Работы"),view==="home"],["#about",L("Обо мне"),view==="about"]];
   return `<aside class="side">
     <div class="blk">
-      <p class="name">Мария Токтуева</p>
+      <p class="name">${L("Мария Токтуева")}</p>
       <p class="bio">${BIO_SHORT}</p>
-      <nav class="nav" aria-label="Разделы">${nav.map(([h,l,c])=>`<a href="${h}"${c?' aria-current="page"':""}>${l}</a>`).join("")}</nav>
+      <nav class="nav" aria-label="${L("Разделы")}">${nav.map(([h,l,c])=>`<a href="${h}"${c?' aria-current="page"':""}>${l}</a>`).join("")}${langLink()}</nav>
     </div>
     <div class="blk">${F.contacts}</div>
   </aside>`;
@@ -151,7 +154,7 @@ function sideA(view){
 function viewA(route, p){
   if(p) return projectPage(p);
   if(route==="about") return `<div class="frame">${sideA("about")}<main class="content"><div class="about">
-      <img class="me" src="img/about/me2.jpg" alt="Мария Токтуева" style="aspect-ratio:1086/1448"><div class="long">${BIO_LONG.map(t=>`<p>${t}</p>`).join("")}</div>
+      <img class="me" src="img/about/me2.jpg" alt="${L("Мария Токтуева")}" style="aspect-ratio:1086/1448"><div class="long">${BIO_LONG.map(t=>`<p>${t}</p>`).join("")}</div>
       <div class="facts2">${F.dirs}${F.edu}${F.tools}${F.cv}</div></div></main></div>`;
   return `<div class="frame">${sideA("home")}<main class="content">${worksGrid(2)}</main></div>`;
 }
@@ -188,7 +191,7 @@ function render(){
   const p = P.find(x=>x.id===h);
   const route = p ? "project" : (h==="about" ? "about" : "home");
   app.innerHTML = viewA(route,p);
-  document.title = p ? p.t+" · Мария Токтуева" : route==="about" ? "Обо мне · Мария Токтуева" : "Мария Токтуева";
+  document.title = p ? p.t+" · "+L("Мария Токтуева") : route==="about" ? L("Обо мне")+" · "+L("Мария Токтуева") : L("Мария Токтуева");
   typograph(app);
   app.querySelectorAll(".flip").forEach(el=>flipShow(el,0,true));
   closeLb();
@@ -208,7 +211,7 @@ function flipShow(el, i, initial){
   const st = flipSets[+el.dataset.fid]; if(!st) return;
   st.idx = Math.max(0, Math.min(st.data.length-1, i));
   const d = st.data[st.idx], img = el.querySelector(".flip-img");
-  img.src = d.src; img.alt = "Разворот " + (st.idx+1); img.style.aspectRatio = d.r;
+  img.src = d.src; img.alt = L("Разворот")+" " + (st.idx+1); img.style.aspectRatio = d.r;
   el.querySelector(".flip-count").textContent = `${st.idx+1} / ${st.data.length}`;
   el.querySelector(".flip-prev").disabled = st.idx===0;
   el.querySelector(".flip-next").disabled = st.idx===st.data.length-1;
