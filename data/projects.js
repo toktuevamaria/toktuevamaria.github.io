@@ -464,7 +464,7 @@ const P = [
      {t:"row",items:[["h13.jpg","2400/1350"],["h14.jpg","2400/1350"]]}
    ]},
   {id:"guva",t:"GUVA",sub:"Съёмка для бренда",cats:["photo"],y:"2026",r:"3/4",kind:"photo",
-   dir:"img/guva/", cover:"img/guva/cover.jpg",
+   dir:"img/guva/", cover:"img/guva/cover-confetti.jpg",
    meta:[["Год","2026"],["Фотограф","<a href='https://instagram.com/mariasavaseva' target='_blank' rel='noopener'>@mariasavaseva</a>"],["Арт-дирекшн","<a href='https://instagram.com/_kristina_gudimova_' target='_blank' rel='noopener'>@_kristina_gudimova_</a>"],["Модели","<a href='https://instagram.com/ssssmmmirnova' target='_blank' rel='noopener'>@ssssmmmirnova</a>, <a href='https://instagram.com/_kisslizz' target='_blank' rel='noopener'>@_kisslizz</a>"],["Визажист","<a href='https://instagram.com/risha.mua' target='_blank' rel='noopener'>@risha.mua</a>"],["Стилисты","<a href='https://instagram.com/fuanura' target='_blank' rel='noopener'>@fuanura</a>, <a href='https://instagram.com/_kristina_gudimova_' target='_blank' rel='noopener'>@_kristina_gudimova_</a>"],["Ассистент","<a href='https://instagram.com/gldgk8' target='_blank' rel='noopener'>@gldgk8</a>"]],
    desc:[
      "GUVA — независимый fashion-проект, который рассматривает одежду как часть личного архива.",
